@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sarah's Latin Music</title>
+<meta name="description" content="Build, preview and download a five-dance International Latin ballroom competition routine." />
+
+<!-- Google Fonts: elegant display + script + highly readable body -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+<style>
+  /* ============================================================
+     DESIGN TOKENS — pink / champagne-gold / ivory fairytale ballroom
+     ============================================================ */
+  :root{
+    --ivory:#fdf7f2;
+    --blush:#fbe7ee;
+    --rose:#d6608f;
+    --rose-deep:#b84c78;
+    --lavender:#e5dcf0;
+    --gold:#c9a24b;
+    --gold-soft:#e6c986;
+    --plum:#432038;
+    --plum-soft:#6d4a5f;
+    --glass:rgba(255,255,255,0.55);
+    --glass-strong:rgba(255,255,255,0.72);
+    --glass-brd:rgba(201,162,75,0.45);
+    --shadow:0 18px 44px -18px rgba(120,42,80,0.45);
+    --shadow-sm:0 8px 22px -12px rgba(120,42,80,0.42);
+    --radius:22px;
+    --radius-sm:14px;
+    --font-display:"Playfair Display", Georgia, "Times New Roman", serif;
+    --font-script:"Cormorant Garamond", Georgia, serif;
+    --font-body:"Poppins", "Segoe UI", system-ui, -apple-system, sans-serif;
+    --ok:#2f8f6b;
+    --warn:#c0453f;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:var(--font-body);
+    color:var(--plum);
+    background:
+      radial-gradient(1200px 600px at 12% -6%, rgba(255,214,231,0.85), transparent 60%),
+      radial-gradient(1000px 620px at 92% 4%, rgba(229,220,240,0.8), transparent 58%),
+      radial-gradient(900px 700px at 50% 108%, rgba(230,201,134,0.35), transparent 60%),
+      linear-gradient(180deg, var(--ivory), #f7ecf1 60%, #f3e4ec 100%);
+    background-attachment:fixed;
+    min-height:100vh;
+    line-height:1.55;
+  }
+
+  /* faint sparkle field */
+  body::before{
+    content:"";
+    position:fixed; inset:0; pointer-events:none; z-index:0;
+    background-image:
+      radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,0.9), transparent),
+      radial-gradient(1.5px 1.5px at 70% 20%, rgba(230,201,134,0.85), transparent),
+      radial-gradient(1.5px 1.5px at 40% 70%, rgba(255,255,255,0.75), transparent),
+      radial-gradient(2px 2px at 85% 60%, rgba(214,96,143,0.6), transparent),
+      radial-gradient(1.5px 1.5px at 15% 85%, rgba(230,201,134,0.7), transparent);
+    background-repeat:no-repeat;
+    opacity:0.7;
+  }
+
+  a{color:var(--rose-deep);}
+  .wrap{position:relative; z-index:1; max-width:1180px; margin:0 auto; padding:0 20px;}
+
+  h1,h2,h3{font-family:var(--font-display); font-weight:600; letter-spacing:.2px; margin:0;}
+  .script{font-family:var(--font-script); font-style:italic;}
+
+  /* skip link */
+  .skip-link{
+    position:absolute; left:-999px; top:0; z-index:100;
+    background:var(--plum); color:#fff; padding:10px 16px; border-radius:0 0 10px 0;
+  }
+  .skip-link:focus{left:0;}
+
+  /* ============================================================
+     HERO
+     ============================================================ */
+  .hero{position:relative; min-height:min(78vh,720px); display:flex; align-items:flex-end; overflow:hidden;}
+  .hero__img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center 22%;}
+  .hero__img--fallback{
+    background:linear-gradient(135deg,#f3c6db,#e6c986 55%,#d6608f);
+  }
+  .hero__overlay{
+    position:absolute; inset:0;
+    background:
+      linear-gradient(180deg, rgba(40,12,28,0.05) 0%, rgba(40,12,28,0.12) 45%, rgba(50,16,36,0.72) 100%),
+      linear-gradient(90deg, rgba(60,18,42,0.35), rgba(60,18,42,0));
+  }
+  .hero__content{position:relative; z-index:2; padding:0 24px 54px; max-width:1180px; margin:0 auto; width:100%;}
+  .hero__eyebrow{
+    font-family:var(--font-script); font-size:clamp(1.1rem,2.6vw,1.5rem);
+    color:#ffe9c9; letter-spacing:2px; text-transform:uppercase;
+    text-shadow:0 2px 14px rgba(0,0,0,0.5);
+  }
+  .hero h1{
+    color:#fff; font-size:clamp(2.4rem,7vw,5rem); line-height:1.02; margin:.15em 0 .1em;
+    text-shadow:0 3px 26px rgba(0,0,0,0.55), 0 0 40px rgba(255,214,231,0.35);
+  }
+  .hero__sub{
+    color:#fdeef4; font-size:clamp(1rem,2.4vw,1.35rem); max-width:34ch;
+    text-shadow:0 2px 12px rgba(0,0,0,0.55);
+  }
+  .cta{
+    display:inline-flex; align-items:center; gap:10px; margin-top:24px;
+    font-family:var(--font-body); font-weight:600; font-size:1.02rem; letter-spacing:.4px;
+    color:var(--plum); text-decoration:none; cursor:pointer;
+    padding:15px 30px; border-radius:999px; border:1px solid rgba(255,255,255,0.8);
+    background:linear-gradient(135deg,#fff,#ffe6f0 60%,#f6d488);
+    box-shadow:0 12px 30px -10px rgba(180,76,120,0.7), inset 0 1px 0 rgba(255,255,255,0.9);
+    transition:transform .25s ease, box-shadow .25s ease;
+  }
+  .cta:hover{transform:translateY(-2px); box-shadow:0 18px 38px -12px rgba(180,76,120,0.8);}
+  .cta:focus-visible{outline:3px solid #fff; outline-offset:3px;}
+
+  /* ============================================================
+     SECTIONS / CARDS
+     ============================================================ */
+  section{padding:56px 0;}
+  .section-head{text-align:center; margin-bottom:34px;}
+  .section-head .kicker{
+    font-family:var(--font-script); font-style:italic; color:var(--rose-deep);
+    font-size:1.35rem; letter-spacing:.5px;
+  }
+  .section-head h2{font-size:clamp(1.7rem,4vw,2.5rem); color:var(--plum); margin-top:2px;}
+  .divider{
+    width:120px; height:2px; margin:16px auto 0;
+    background:linear-gradient(90deg,transparent,var(--gold),transparent);
+    position:relative;
+  }
+  .divider::after{content:"❖"; position:absolute; left:50%; top:-12px; transform:translateX(-50%); color:var(--gold); font-size:.9rem;}
+
+  .glass{
+    background:var(--glass);
+    -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
+    border:1px solid var(--glass-brd);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+  }
+
+  /* ============================================================
+     ROUTINE BUILDER — the "dance card"
+     ============================================================ */
+  .builder-grid{display:grid; grid-template-columns:1.15fr .85fr; gap:26px; align-items:start;}
+
+  .dancecard{padding:26px 24px 30px;}
+  .dancecard__title{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:6px;}
+  .dancecard__title h2{font-size:1.5rem;}
+  .dancecard__title .script{font-size:1.35rem; color:var(--rose-deep);}
+
+  .slot{
+    position:relative;
+    border:1.5px dashed rgba(201,162,75,0.55);
+    border-radius:var(--radius-sm);
+    background:rgba(255,255,255,0.4);
+    padding:16px 16px 16px 62px;
+    margin:14px 0;
+    transition:border-color .2s ease, background .2s ease, box-shadow .2s ease, transform .2s ease;
+  }
+  .slot[data-filled="true"]{
+    border-style:solid;
+    border-color:rgba(214,96,143,0.5);
+    background:linear-gradient(135deg, rgba(255,255,255,0.78), rgba(251,231,238,0.7));
+    box-shadow:var(--shadow-sm);
+  }
+  .slot.drag-over{border-color:var(--rose); background:rgba(251,231,238,0.9); transform:translateY(-2px);}
+  .slot.drag-reject{border-color:var(--warn); background:rgba(255,235,235,0.9);}
+  .slot__icon{
+    position:absolute; left:14px; top:14px;
+    width:36px; height:36px; display:grid; place-items:center;
+    border-radius:50%; font-size:1.15rem;
+    background:radial-gradient(circle at 30% 30%, #fff, #f6d488);
+    border:1px solid var(--gold-soft); box-shadow:inset 0 0 6px rgba(255,255,255,0.8);
+    color:var(--rose-deep);
+  }
+  .slot__order{
+    position:absolute; left:14px; top:52px; width:36px; text-align:center;
+    font-family:var(--font-display); font-size:.72rem; color:var(--plum-soft); letter-spacing:1px;
+  }
+  .slot__name{font-family:var(--font-display); font-weight:600; font-size:1.15rem; color:var(--plum);}
+  .slot__track{font-size:.96rem; color:var(--plum-soft); min-height:1.2em; margin-top:2px; word-break:break-word;}
+  .slot__empty{font-style:italic; color:var(--plum-soft); font-size:.92rem;}
+  .slot__meta{display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; margin-top:12px;}
+  .slot__dur{font-size:.85rem; color:var(--plum-soft);}
+  .slot__dur b{color:var(--plum);}
+
+  .field{display:inline-flex; align-items:center; gap:6px; font-size:.85rem; color:var(--plum-soft);}
+  select, .btn{font-family:var(--font-body);}
+  select{
+    font-size:.86rem; color:var(--plum); padding:6px 8px; border-radius:9px;
+    border:1px solid var(--glass-brd); background:rgba(255,255,255,0.85); cursor:pointer;
+  }
+  select:focus-visible, .btn:focus-visible, .icon-btn:focus-visible, input:focus-visible, [tabindex]:focus-visible{
+    outline:3px solid var(--rose); outline-offset:2px;
+  }
+
+  .slot__actions{display:flex; gap:8px; margin-left:auto;}
+  .icon-btn{
+    border:1px solid var(--glass-brd); background:rgba(255,255,255,0.85);
+    color:var(--plum); border-radius:9px; padding:6px 10px; cursor:pointer; font-size:.82rem;
+    display:inline-flex; align-items:center; gap:5px; transition:background .2s,transform .2s;
+  }
+  .icon-btn:hover{background:#fff; transform:translateY(-1px);}
+  .icon-btn[data-variant="remove"]:hover{background:#ffecec; color:var(--warn);}
+
+  /* mandatory break marker between cards */
+  .breakmark{
+    display:flex; align-items:center; gap:12px; justify-content:center;
+    margin:2px 0; padding:9px 14px;
+    color:var(--gold); font-family:var(--font-script); font-style:italic; letter-spacing:1px;
+    font-size:.98rem;
+  }
+  .breakmark::before,.breakmark::after{content:""; height:1px; flex:1; background:linear-gradient(90deg,transparent,var(--gold-soft),transparent);}
+  .breakmark span{white-space:nowrap; color:var(--plum-soft);}
+  .breakmark small{color:var(--gold); font-family:var(--font-body); font-style:normal; font-size:.72rem; letter-spacing:2px; text-transform:uppercase;}
+
+  /* ============================================================
+     TRACK LIBRARY
+     ============================================================ */
+  .library{padding:24px 22px 26px; position:sticky; top:16px; max-height:calc(100vh - 32px); display:flex; flex-direction:column;}
+  .library h2{font-size:1.4rem; margin-bottom:2px;}
+  .library p.hint{font-size:.82rem; color:var(--plum-soft); margin:2px 0 12px;}
+  .lib-cats{overflow:auto; padding-right:4px; flex:1;}
+  .lib-cat{margin-bottom:14px;}
+  .lib-cat__head{
+    display:flex; align-items:center; gap:8px; cursor:pointer; user-select:none;
+    font-family:var(--font-display); font-weight:600; color:var(--rose-deep); font-size:1.02rem;
+    padding:6px 4px; border-bottom:1px solid rgba(201,162,75,0.3);
+  }
+  .lib-cat__head .count{margin-left:auto; font-family:var(--font-body); font-size:.72rem; color:var(--plum-soft); font-weight:400;}
+  .lib-cat__head .chev{transition:transform .2s ease; color:var(--gold);}
+  .lib-cat[data-open="false"] .chev{transform:rotate(-90deg);}
+  .lib-cat[data-open="false"] .lib-list{display:none;}
+  .lib-list{list-style:none; margin:8px 0 0; padding:0; display:flex; flex-direction:column; gap:7px;}
+  .lib-item{
+    display:flex; align-items:center; gap:10px;
+    padding:9px 11px; border-radius:11px;
+    background:rgba(255,255,255,0.6); border:1px solid rgba(201,162,75,0.28);
+    cursor:grab; transition:background .18s, box-shadow .18s, transform .18s;
+  }
+  .lib-item:hover{background:#fff; box-shadow:var(--shadow-sm); transform:translateY(-1px);}
+  .lib-item:active{cursor:grabbing;}
+  .lib-item.is-selected{border-color:var(--rose); background:linear-gradient(135deg,#fff,#fbe7ee);}
+  .lib-item__grip{color:var(--gold); font-size:.9rem;}
+  .lib-item__title{font-size:.9rem; color:var(--plum); flex:1; word-break:break-word;}
+  .lib-item__add{
+    border:none; background:linear-gradient(135deg,#fff,#f6d488); color:var(--plum);
+    border-radius:8px; padding:5px 12px; font-size:.78rem; font-weight:600; cursor:pointer;
+    box-shadow:var(--shadow-sm); transition:transform .18s;
+  }
+  .lib-item__add:hover{transform:translateY(-1px);}
+
+  /* ============================================================
+     SUMMARY
+     ============================================================ */
+  .summary{padding:26px 26px 30px;}
+  .summary h2{font-size:1.4rem; margin-bottom:14px; text-align:center;}
+  .summary__totals{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin-bottom:18px;}
+  .stat{
+    text-align:center; padding:14px 10px; border-radius:14px;
+    background:rgba(255,255,255,0.6); border:1px solid var(--glass-brd);
+  }
+  .stat .n{font-family:var(--font-display); font-size:1.7rem; color:var(--rose-deep);}
+  .stat .l{font-size:.74rem; letter-spacing:1px; text-transform:uppercase; color:var(--plum-soft); margin-top:2px;}
+  .summary__list{list-style:none; margin:0; padding:0;}
+  .summary__list li{
+    display:flex; align-items:center; gap:10px; padding:9px 4px; border-bottom:1px dashed rgba(201,162,75,0.3);
+    font-size:.92rem;
+  }
+  .summary__list li:last-child{border-bottom:none;}
+  .summary__list .d{font-family:var(--font-display); color:var(--plum); min-width:96px;}
+  .summary__list .t{flex:1; color:var(--plum-soft); word-break:break-word;}
+  .summary__list .s{font-size:.78rem; color:var(--rose-deep); background:rgba(214,96,143,0.1); padding:2px 9px; border-radius:999px; white-space:nowrap;}
+  .summary__list .empty{color:var(--plum-soft); font-style:italic;}
+
+  /* ============================================================
+     ACTION BAR + PLAYER
+     ============================================================ */
+  .actions{display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin-top:28px;}
+  .btn{
+    font-weight:600; font-size:.98rem; letter-spacing:.3px; cursor:pointer;
+    border-radius:999px; padding:14px 28px; border:1px solid transparent;
+    display:inline-flex; align-items:center; gap:9px; transition:transform .2s, box-shadow .2s, background .2s;
+  }
+  .btn--primary{color:#fff; background:linear-gradient(135deg,var(--rose),var(--rose-deep)); box-shadow:0 14px 30px -12px rgba(184,76,120,0.9);}
+  .btn--primary:hover{transform:translateY(-2px);}
+  .btn--gold{color:var(--plum); background:linear-gradient(135deg,#fff,#f6d488); box-shadow:var(--shadow-sm); border-color:var(--gold-soft);}
+  .btn--gold:hover{transform:translateY(-2px);}
+  .btn--ghost{color:var(--plum); background:rgba(255,255,255,0.6); border-color:var(--glass-brd);}
+  .btn--ghost:hover{background:#fff;}
+  .btn:disabled{opacity:.5; cursor:not-allowed; transform:none !important;}
+
+  .player{margin-top:26px; padding:22px 22px 24px; display:none;}
+  .player.is-active{display:block;}
+  .player__now{display:flex; flex-wrap:wrap; align-items:baseline; gap:8px 16px; margin-bottom:6px;}
+  .player__section{font-family:var(--font-display); font-size:1.25rem; color:var(--rose-deep);}
+  .player__track{color:var(--plum); font-size:1rem; flex:1; min-width:160px;}
+  .player__speed{font-size:.78rem; color:var(--plum-soft); background:rgba(214,96,143,0.1); padding:2px 10px; border-radius:999px;}
+  .player__break{
+    display:none; text-align:center; padding:10px; margin:6px 0 2px; border-radius:12px;
+    background:linear-gradient(135deg, rgba(230,201,134,0.25), rgba(214,96,143,0.15));
+    border:1px solid var(--gold-soft);
+  }
+  .player__break.is-on{display:block;}
+  .player__break b{font-family:var(--font-display); color:var(--rose-deep); font-size:1.1rem; display:block;}
+  .player__break .cd{font-variant-numeric:tabular-nums; font-size:1.6rem; color:var(--plum); letter-spacing:1px;}
+
+  .seek{display:flex; align-items:center; gap:12px; margin:14px 0 4px;}
+  .seek input[type="range"]{flex:1;}
+  .time{font-variant-numeric:tabular-nums; font-size:.85rem; color:var(--plum-soft); min-width:46px; text-align:center;}
+
+  input[type="range"]{
+    -webkit-appearance:none; appearance:none; height:6px; border-radius:999px;
+    background:linear-gradient(90deg,var(--rose) 0%, var(--rose) var(--val,0%), rgba(201,162,75,0.28) var(--val,0%));
+    cursor:pointer;
+  }
+  input[type="range"]::-webkit-slider-thumb{
+    -webkit-appearance:none; appearance:none; width:18px; height:18px; border-radius:50%;
+    background:radial-gradient(circle at 30% 30%,#fff,#f6d488); border:1px solid var(--gold);
+    box-shadow:0 2px 6px rgba(180,76,120,0.5);
+  }
+  input[type="range"]::-moz-range-thumb{
+    width:18px; height:18px; border-radius:50%; border:1px solid var(--gold);
+    background:radial-gradient(circle at 30% 30%,#fff,#f6d488); box-shadow:0 2px 6px rgba(180,76,120,0.5);
+  }
+
+  .player__controls{display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-top:14px;}
+  .pbtn{
+    width:46px; height:46px; border-radius:50%; border:1px solid var(--glass-brd);
+    background:rgba(255,255,255,0.85); color:var(--plum); cursor:pointer; font-size:1.05rem;
+    display:grid; place-items:center; transition:transform .15s, background .2s;
+  }
+  .pbtn:hover{background:#fff; transform:translateY(-1px);}
+  .pbtn--main{width:56px; height:56px; font-size:1.3rem; background:linear-gradient(135deg,var(--rose),var(--rose-deep)); color:#fff; border:none;}
+  .vol{display:flex; align-items:center; gap:8px; margin-left:auto; min-width:140px;}
+  .vol input[type="range"]{width:110px;}
+
+  /* ============================================================
+     TOAST / MESSAGES
+     ============================================================ */
+  .toast-wrap{position:fixed; left:50%; bottom:26px; transform:translateX(-50%); z-index:60; display:flex; flex-direction:column; gap:10px; width:min(92vw,440px);}
+  .toast{
+    padding:14px 18px; border-radius:14px; color:var(--plum); font-size:.92rem;
+    background:var(--glass-strong); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
+    border:1px solid var(--glass-brd); box-shadow:var(--shadow);
+    display:flex; gap:10px; align-items:flex-start;
+    animation:toastIn .3s ease;
+  }
+  .toast[data-kind="error"]{border-color:rgba(192,69,63,0.5);}
+  .toast[data-kind="success"]{border-color:rgba(47,143,107,0.5);}
+  .toast .x{margin-left:auto; cursor:pointer; border:none; background:none; color:var(--plum-soft); font-size:1.1rem;}
+  @keyframes toastIn{from{opacity:0; transform:translateY(12px);}to{opacity:1; transform:none;}}
+
+  /* ============================================================
+     EXPORT MODAL
+     ============================================================ */
+  .modal-back{
+    position:fixed; inset:0; z-index:80; display:none; align-items:center; justify-content:center; padding:20px;
+    background:rgba(60,18,42,0.45); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+  }
+  .modal-back.is-open{display:flex;}
+  .modal{width:min(94vw,480px); padding:28px 26px 26px; text-align:center;}
+  .modal h3{font-size:1.5rem; color:var(--plum); margin-bottom:4px;}
+  .modal p.note{font-size:.86rem; color:var(--plum-soft); margin:2px 0 18px;}
+  .progress{height:12px; border-radius:999px; background:rgba(201,162,75,0.25); overflow:hidden; margin:10px 0 8px;}
+  .progress__bar{height:100%; width:0%; border-radius:999px; background:linear-gradient(90deg,var(--gold-soft),var(--rose)); transition:width .3s ease;}
+  .modal__step{font-size:.92rem; color:var(--plum); min-height:1.3em;}
+  .modal__pct{font-family:var(--font-display); font-size:1.4rem; color:var(--rose-deep); margin-top:4px;}
+  .modal__actions{margin-top:20px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;}
+  .spinner{width:34px; height:34px; margin:0 auto 12px; border-radius:50%; border:3px solid rgba(214,96,143,0.25); border-top-color:var(--rose); animation:spin 1s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  footer{text-align:center; padding:30px 20px 50px; color:var(--plum-soft); font-size:.82rem;}
+  footer .script{font-size:1.1rem; color:var(--rose-deep);}
+
+  /* ============================================================
+     RESPONSIVE
+     ============================================================ */
+  @media (max-width:920px){
+    .builder-grid{grid-template-columns:1fr;}
+    .library{position:static; max-height:none;}
+    .lib-cats{max-height:none; overflow:visible;}
+  }
+  @media (max-width:560px){
+    .wrap{padding:0 14px;}
+    section{padding:42px 0;}
+    .hero__content{padding:0 16px 40px;}
+    .slot{padding-left:56px;}
+    .slot__actions{margin-left:0; width:100%;}
+    .actions .btn{flex:1 1 auto; justify-content:center;}
+    .vol{margin-left:0; width:100%;}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important;}
+  }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#builder">Skip to routine builder</a>
+
+<!-- ========================= HERO ========================= -->
+<header class="hero" role="banner">
+  <img
+    class="hero__img"
+    src="assets/images/ballroom-hero.jpg"
+    alt="A ballroom dancer in a sparkling pink crystal gown with soft feathers, mid-pose beneath golden chandeliers in an elegant fairytale ballroom."
+    onerror="this.classList.add('hero__img--fallback'); this.removeAttribute('src');"
+  />
+  <div class="hero__overlay" aria-hidden="true"></div>
+  <div class="hero__content">
+    <p class="hero__eyebrow">A five-dance competition routine</p>
+    <h1>Sarah's Latin&nbsp;Music</h1>
+    <p class="hero__sub">Create your perfect five-dance competition routine — Cha&nbsp;Cha, Samba, Rumba, Paso&nbsp;Doble &amp; Jive.</p>
+    <a class="cta" href="#builder" id="createCta">✦ Create My Routine</a>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ========================= BUILDER ========================= -->
+  <section id="builder" aria-labelledby="builder-h">
+    <div class="section-head">
+      <div class="kicker">Your dance card</div>
+      <h2 id="builder-h">Build Your Routine</h2>
+      <div class="divider" aria-hidden="true"></div>
+    </div>
+
+    <div class="builder-grid">
+      <!-- dance card (5 fixed slots + 4 breaks) -->
+      <div class="dancecard glass" aria-label="Routine dance card">
+        <div id="slots"><!-- slots + break markers injected here --></div>
+      </div>
+
+      <!-- track library -->
+      <aside class="library glass" aria-labelledby="lib-h">
+        <h2 id="lib-h">Track Library</h2>
+        <p class="hint">Drag a track onto its matching dance — or tap <strong>Add</strong>. Tracks only fit their own dance.</p>
+        <div class="lib-cats" id="libCats"><!-- categories injected --></div>
+      </aside>
+    </div>
+
+    <!-- action buttons -->
+    <div class="actions">
+      <button class="btn btn--primary" id="playBtn" type="button">▶ Play Full Routine</button>
+      <button class="btn btn--gold" id="downloadBtn" type="button">⬇ Download Full Routine MP3</button>
+      <button class="btn btn--ghost" id="resetBtn" type="button">↺ Reset Routine</button>
+    </div>
+
+    <!-- inline player -->
+    <div class="player glass" id="player" role="region" aria-label="Routine player" aria-live="polite">
+      <div class="player__now">
+        <span class="player__section" id="pSection">Cha Cha</span>
+        <span class="player__track" id="pTrack">—</span>
+        <span class="player__speed" id="pSpeed">100%</span>
+      </div>
+
+      <div class="player__break" id="pBreak" role="status">
+        <b>Competition Break</b>
+        <span class="cd" id="pBreakCd">00:30</span>
+        <span> remaining</span>
+      </div>
+
+      <div class="seek">
+        <span class="time" id="pElapsed">0:00</span>
+        <input type="range" id="seek" min="0" max="1000" value="0" step="1" aria-label="Seek through routine" />
+        <span class="time" id="pTotal">0:00</span>
+      </div>
+
+      <div class="player__controls">
+        <button class="pbtn" id="prevBtn" type="button" aria-label="Previous dance" title="Previous dance">⏮</button>
+        <button class="pbtn pbtn--main" id="ppBtn" type="button" aria-label="Play or pause" title="Play / Pause">⏸</button>
+        <button class="pbtn" id="nextBtn" type="button" aria-label="Next dance" title="Next dance">⏭</button>
+        <button class="pbtn" id="stopBtn" type="button" aria-label="Stop and reset" title="Stop">⏹</button>
+        <div class="vol">
+          <span aria-hidden="true">🔊</span>
+          <input type="range" id="vol" min="0" max="100" value="100" aria-label="Volume" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================= SUMMARY ========================= -->
+  <section aria-labelledby="sum-h">
+    <div class="section-head">
+      <div class="kicker">At a glance</div>
+      <h2 id="sum-h">Routine Summary</h2>
+      <div class="divider" aria-hidden="true"></div>
+    </div>
+    <div class="summary glass">
+      <div class="summary__totals">
+        <div class="stat"><div class="n" id="sTracks">0<span style="font-size:1rem;color:var(--plum-soft)">/5</span></div><div class="l">Tracks selected</div></div>
+        <div class="stat"><div class="n" id="sMusic">0:00</div><div class="l">Music duration</div></div>
+        <div class="stat"><div class="n" id="sBreaks">2:00</div><div class="l">Break duration</div></div>
+        <div class="stat"><div class="n" id="sTotal">2:00</div><div class="l">Total routine</div></div>
+      </div>
+      <ul class="summary__list" id="sList"><!-- per-dance summary --></ul>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p class="script">Dancing with my best friends ♡</p>
+  <p>Audio is processed privately in your browser — nothing is uploaded to any server.</p>
+</footer>
+
+<!-- toast container -->
+<div class="toast-wrap" id="toasts" aria-live="assertive" aria-atomic="false"></div>
+
+<!-- export modal -->
+<div class="modal-back" id="exportModal" role="dialog" aria-modal="true" aria-labelledby="expTitle">
+  <div class="modal glass">
+    <div class="spinner" id="expSpinner"></div>
+    <h3 id="expTitle">Creating your routine…</h3>
+    <p class="note">Processing takes place privately in your browser. It may take a little longer on mobile devices.</p>
+    <div class="progress"><div class="progress__bar" id="expBar"></div></div>
+    <div class="modal__pct" id="expPct">0%</div>
+    <div class="modal__step" id="expStep">Preparing audio engine…</div>
+    <div class="modal__actions" id="expActions" style="display:none;">
+      <button class="btn btn--ghost" id="expClose" type="button">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Hidden audio element used for playback & duration probing -->
+<audio id="audio" preload="none" crossorigin="anonymous"></audio>
+
+<script>
+"use strict";
+/* ================================================================
+   SARAH'S LATIN MUSIC — routine builder
+   Static, no backend. Works on GitHub Pages project sites.
+   ================================================================ */
+
+/* ---------------------------------------------------------------
+   1) CONFIG
+   --------------------------------------------------------------- */
+const AUDIO_DIR = "assets/audio/";          // relative path (GitHub Pages friendly)
+const BREAK_SECONDS = 30;                   // each mandatory break
+const NUM_BREAKS = 4;                       // between the 5 dances
+
+// Fixed dance order — DO NOT change the order.
+const DANCES = [
+  { key:"chacha", prefix:"C", name:"Cha Cha",    icon:"♪" },
+  { key:"samba",  prefix:"S", name:"Samba",      icon:"❀" },
+  { key:"rumba",  prefix:"R", name:"Rumba",      icon:"❤" },
+  { key:"paso",   prefix:"P", name:"Paso Doble", icon:"✶" },
+  { key:"jive",   prefix:"J", name:"Jive",       icon:"✦" },
+];
+const DANCE_BY_KEY = Object.fromEntries(DANCES.map(d=>[d.key,d]));
+const KEY_BY_PREFIX = { C:"chacha", S:"samba", R:"rumba", P:"paso", J:"jive" };
+
+// Speed dropdown options (playback rate as a fraction of original)
+const SPEEDS = [
+  { value:1.00, label:"100% – Original Speed" },
+  { value:0.95, label:"95%" },
+  { value:0.90, label:"90%" },
+  { value:0.85, label:"85%" },
+  { value:0.80, label:"80%" },
+  { value:0.75, label:"75%" },
+  { value:0.70, label:"70%" },
+  { value:0.60, label:"60%" },
+];
+const DEFAULT_SPEED = 1.00;
+
+/* ---------------------------------------------------------------
+   2) TRACK MANIFEST
+   ---------------------------------------------------------------
+   A static GitHub Pages site cannot list a folder's contents, so
+   every MP3 you upload to assets/audio/ MUST be listed here.
+
+   HOW TO ADD A TRACK:
+     • Upload the .mp3 into  assets/audio/
+     • Add one line below:   { file: "X_-_Your_Song.mp3" },
+       where X is the dance prefix:  C=Cha Cha  S=Samba  R=Rumba
+                                     P=Paso Doble  J=Jive
+   The title shows automatically (prefix removed, "_"/"-" → spaces).
+   To force a custom title, add a title:  { file:"...", title:"..." }
+
+   >>> ADD / EDIT YOUR 40 FILENAMES BETWEEN THE MARKERS BELOW <<<
+--------------------------------------------------------------- */
+const TRACKS = [
+  // ---------- Cha Cha (C) ----------
+  { file: "C_-_Stand_by_Me.mp3" },
+  { file: "C_-_The_Boy.mp3" },
+
+  // ---------- Samba (S) ----------
+  { file: "S_-_Quando_Quando_Quando.mp3" },
+  { file: "S_-_Samba_de_la_Torre.mp3" },
+  { file: "S_-_Tico_Tico.mp3" },
+
+  // ---------- Rumba (R) ----------
+  { file: "R_-_Historia_de_un_Amor.mp3" },
+  { file: "R_-_Manha_de_Carnival.mp3" },
+  { file: "R_-_Scheherazade.mp3" },
+
+  // ---------- Paso Doble (P) ----------
+  { file: "P_-_Fuegos.mp3" },
+  { file: "P_-_Granada_Paso_Doble.mp3" },
+  { file: "P_-_Ole_Torero.mp3" },
+
+  // ---------- Jive (J) ----------
+  { file: "J_-_In_the_Mood.mp3" },
+  { file: "J_-_Mack_the_Knife.mp3" },
+  { file: "J_-_Mambo_Rock.mp3" },
+
+  // >>> ADD MORE TRACKS ABOVE THIS LINE — one { file: "..." } per song <<<
+];
+
+/* ---------------------------------------------------------------
+   3) HELPERS
+   --------------------------------------------------------------- */
+function detectCategoryKey(file){
+  // strip leading separators, take first letter as the dance prefix
+  const f = String(file).replace(/^[\s\-_]+/, "");
+  const first = f.charAt(0).toUpperCase();
+  return KEY_BY_PREFIX[first] || null;
+}
+function cleanTitle(file){
+  let t = String(file).replace(/\.mp3$/i, "");        // drop extension
+  t = t.replace(/^[\s\-_]*[CSRPJ][\s\-_]+/i, "");     // drop "C_-_" / "-C-" prefix
+  t = t.replace(/[\-_]+/g, " ");                       // separators -> spaces
+  return t.replace(/\s+/g, " ").trim() || "Untitled";
+}
+function fmtTime(sec){
+  if(!isFinite(sec) || sec < 0) sec = 0;
+  sec = Math.round(sec);
+  const m = Math.floor(sec/60), s = sec%60;
+  return m + ":" + String(s).padStart(2,"0");
+}
+function fmtClock(sec){ // mm:ss with leading zero minute (for breaks)
+  if(!isFinite(sec) || sec<0) sec=0;
+  sec = Math.max(0, Math.round(sec));
+  const m = Math.floor(sec/60), s = sec%60;
+  return String(m).padStart(2,"0") + ":" + String(s).padStart(2,"0");
+}
+function adjustedDuration(original, speed){
+  // slowing down (speed<1) makes it LONGER: adjusted = original / speed
+  if(!isFinite(original) || original<=0) return 0;
+  return original / speed;
+}
+function speedLabel(v){
+  const found = SPEEDS.find(s=>Math.abs(s.value-v)<1e-6);
+  return found ? found.label : Math.round(v*100)+"%";
+}
+function speedPct(v){ return Math.round(v*100)+"%"; }
+function trackUrl(file){ return AUDIO_DIR + encodeURIComponent(file); }
+
+// Build categorised library from the manifest
+const LIBRARY = { chacha:[], samba:[], rumba:[], paso:[], jive:[] };
+(function buildLibrary(){
+  const seen = new Set();
+  TRACKS.forEach(entry=>{
+    if(!entry || !entry.file) return;
+    const file = entry.file.trim();
+    if(seen.has(file)) return; seen.add(file);
+    const key = detectCategoryKey(file);
+    if(!key){ console.warn("Track has no recognised dance prefix, skipped:", file); return; }
+    LIBRARY[key].push({
+      file,
+      key,
+      title: entry.title ? String(entry.title) : cleanTitle(file),
+      url: trackUrl(file),
+      duration: null,   // filled lazily via metadata
+    });
+  });
+  // alphabetise within each category for tidy display
+  Object.values(LIBRARY).forEach(arr=>arr.sort((a,b)=>a.title.localeCompare(b.title)));
+})();
+function findTrack(key, file){ return (LIBRARY[key]||[]).find(t=>t.file===file) || null; }
+
+/* ---------------------------------------------------------------
+   4) STATE + PERSISTENCE
+   --------------------------------------------------------------- */
+const STORAGE_KEY = "sarahsLatinMusic.v1";
+const state = {
+  slots: { chacha:null, samba:null, rumba:null, paso:null, jive:null }, // {file, speed}
+  volume: 1.0,
+};
+
+function saveState(){
+  try{
+    const data = { slots:{}, volume:state.volume };
+    for(const k in state.slots){
+      data.slots[k] = state.slots[k] ? { file:state.slots[k].file, speed:state.slots[k].speed } : null;
+    }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }catch(e){ /* storage may be unavailable (private mode) — non-fatal */ }
+}
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return;
+    const data = JSON.parse(raw);
+    if(typeof data.volume === "number") state.volume = Math.min(1, Math.max(0, data.volume));
+    if(data.slots){
+      for(const k in state.slots){
+        const s = data.slots[k];
+        if(s && s.file && findTrack(k, s.file)){
+          const speed = SPEEDS.some(sp=>Math.abs(sp.value-s.speed)<1e-6) ? s.speed : DEFAULT_SPEED;
+          state.slots[k] = { file:s.file, speed };
+        }
+      }
+    }
+  }catch(e){ /* ignore corrupt storage */ }
+}
+
+/* ---------------------------------------------------------------
+   5) SMALL DOM UTILITIES (safe — no raw innerHTML with data)
+   --------------------------------------------------------------- */
+const $ = sel => document.querySelector(sel);
+function el(tag, props={}, ...kids){
+  const n = document.createElement(tag);
+  for(const [k,v] of Object.entries(props)){
+    if(v==null) continue;
+    if(k==="class") n.className=v;
+    else if(k==="text") n.textContent=v;
+    else if(k==="html") n.innerHTML=v;               // used only with static literals
+    else if(k.startsWith("on") && typeof v==="function") n.addEventListener(k.slice(2), v);
+    else if(k==="dataset"){ for(const dk in v) n.dataset[dk]=v[dk]; }
+    else n.setAttribute(k, v);
+  }
+  kids.flat().forEach(c=>{ if(c!=null) n.append(c.nodeType?c:document.createTextNode(c)); });
+  return n;
+}
+
+/* ---------------------------------------------------------------
+   6) TOASTS
+   --------------------------------------------------------------- */
+function toast(msg, kind="info", timeout=4200){
+  const wrap = $("#toasts");
+  const t = el("div", { class:"toast", dataset:{kind}, role:"status" },
+    el("span", { text: (kind==="error"?"⚠ ":kind==="success"?"✦ ":"♪ ") }),
+    el("span", { text: msg }),
+    el("button", { class:"x", "aria-label":"Dismiss message", text:"×", onclick:()=>t.remove() })
+  );
+  wrap.append(t);
+  if(timeout) setTimeout(()=>t.remove(), timeout);
+}
+
+/* ---------------------------------------------------------------
+   7) DURATION LOADING (lazy — only for selected tracks)
+   --------------------------------------------------------------- */
+function loadDuration(track){
+  return new Promise((resolve)=>{
+    if(track.duration!=null){ resolve(track.duration); return; }
+    const probe = new Audio();
+    probe.preload = "metadata";
+    probe.src = track.url;
+    const done = ok => {
+      probe.removeAttribute("src"); probe.load?.();
+      resolve(ok ? track.duration : 0);
+    };
+    probe.addEventListener("loadedmetadata", ()=>{
+      track.duration = isFinite(probe.duration) ? probe.duration : 0;
+      done(true);
+    }, { once:true });
+    probe.addEventListener("error", ()=>{
+      track.duration = 0;
+      toast('Could not read "'+track.title+'". Check the file exists in assets/audio/.', "error");
+      done(false);
+    }, { once:true });
+  });
+}
+
+/* ---------------------------------------------------------------
+   8) RENDER — dance card (slots + breaks)
+   --------------------------------------------------------------- */
+function renderSlots(){
+  const host = $("#slots");
+  host.textContent = "";
+  DANCES.forEach((dance, i)=>{
+    host.append(buildSlot(dance, i));
+    if(i < DANCES.length-1) host.append(buildBreakMark(i+1));
+  });
+}
+
+function buildSlot(dance, index){
+  const sel = state.slots[dance.key];
+  const track = sel ? findTrack(dance.key, sel.file) : null;
+
+  const slot = el("div", {
+    class:"slot", id:"slot-"+dance.key,
+    dataset:{ dance:dance.key, filled: track ? "true":"false" },
+    role:"group", "aria-label":dance.name+" slot"
+  });
+
+  slot.append(el("div", { class:"slot__icon", "aria-hidden":"true", text:dance.icon }));
+  slot.append(el("div", { class:"slot__order", "aria-hidden":"true", text:"№"+(index+1) }));
+
+  slot.append(el("div", { class:"slot__name", text:dance.name }));
+
+  if(track){
+    slot.append(el("div", { class:"slot__track", text:track.title }));
+
+    const meta = el("div", { class:"slot__meta" });
+
+    // duration display
+    const durEl = el("span", { class:"slot__dur", id:"dur-"+dance.key });
+    setSlotDuration(durEl, track, sel.speed);
+    meta.append(durEl);
+
+    // speed select
+    const speedSel = el("select", {
+      "aria-label":"Playback speed for "+dance.name,
+      onchange:(e)=>{ setSpeed(dance.key, parseFloat(e.target.value)); }
+    });
+    SPEEDS.forEach(sp=>{
+      const opt = el("option", { value:sp.value, text:sp.label });
+      if(Math.abs(sp.value-sel.speed)<1e-6) opt.selected = true;
+      speedSel.append(opt);
+    });
+    meta.append(el("label", { class:"field" }, "Speed ", speedSel));
+
+    // actions
+    const actions = el("div", { class:"slot__actions" });
+    actions.append(el("button", {
+      class:"icon-btn", type:"button", title:"Preview "+dance.name,
+      "aria-label":"Preview "+dance.name,
+      onclick:()=>previewTrack(dance.key)
+    }, "▶ Preview"));
+    actions.append(el("button", {
+      class:"icon-btn", type:"button", dataset:{variant:"remove"},
+      title:"Remove "+dance.name+" track", "aria-label":"Remove "+dance.name+" track",
+      onclick:()=>removeTrack(dance.key)
+    }, "✕ Remove"));
+    meta.append(actions);
+
+    slot.append(meta);
+  } else {
+    slot.append(el("div", { class:"slot__track" },
+      el("span", { class:"slot__empty", text:"Choose a "+dance.name+" track to begin." })
+    ));
+    // an explicit, keyboard-reachable hint that this is a drop target
+    slot.setAttribute("tabindex","0");
+    slot.setAttribute("aria-dropeffect","move");
+  }
+
+  // Drag & drop target wiring
+  wireDropTarget(slot, dance.key);
+  return slot;
+}
+
+function setSlotDuration(durEl, track, speed){
+  if(track.duration==null){
+    durEl.innerHTML = ""; durEl.append("Loading duration…");
+    loadDuration(track).then(()=>setSlotDuration(durEl, track, speed));
+    return;
+  }
+  durEl.textContent = "";
+  const adj = adjustedDuration(track.duration, speed);
+  durEl.append("Length: ");
+  durEl.append(el("b", { text: fmtTime(adj) }));
+  if(Math.abs(speed-1) > 1e-6){
+    durEl.append(" (" + speedPct(speed) + " of " + fmtTime(track.duration) + ")");
+  }
+}
+
+function buildBreakMark(n){
+  return el("div", { class:"breakmark", role:"separator",
+      "aria-label":"Mandatory 30 second competition break "+n },
+    el("span", {}, el("small", { text:"Break "+n }), " ", "30-Second Competition Break")
+  );
+}
+
+/* ---------------------------------------------------------------
+   9) RENDER — track library
+   --------------------------------------------------------------- */
+function renderLibrary(){
+  const host = $("#libCats");
+  host.textContent = "";
+  DANCES.forEach(dance=>{
+    const items = LIBRARY[dance.key] || [];
+    const cat = el("div", { class:"lib-cat", dataset:{open:"true", dance:dance.key} });
+
+    const head = el("div", {
+      class:"lib-cat__head", role:"button", tabindex:"0",
+      "aria-expanded":"true", "aria-controls":"liblist-"+dance.key,
+      onclick:()=>toggleCat(cat),
+      onkeydown:(e)=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); toggleCat(cat);} }
+    },
+      el("span", { class:"chev", "aria-hidden":"true", text:"▾" }),
+      el("span", { text:dance.icon+"  "+dance.name }),
+      el("span", { class:"count", text: items.length + (items.length===1?" track":" tracks") })
+    );
+    cat.append(head);
+
+    const list = el("ul", { class:"lib-list", id:"liblist-"+dance.key });
+    if(items.length===0){
+      list.append(el("li", { class:"lib-item" },
+        el("span", { class:"lib-item__title script", text:"No "+dance.name+" tracks yet — add them to the manifest." })));
+    }
+    items.forEach(track=>list.append(buildLibItem(track, dance)));
+    cat.append(list);
+    host.append(cat);
+  });
+  refreshLibrarySelection();
+}
+
+function toggleCat(cat){
+  const open = cat.dataset.open === "true";
+  cat.dataset.open = open ? "false" : "true";
+  cat.querySelector(".lib-cat__head").setAttribute("aria-expanded", open ? "false":"true");
+}
+
+function buildLibItem(track, dance){
+  const li = el("li", {
+    class:"lib-item", draggable:"true",
+    id:"lib-"+track.key+"-"+cssId(track.file),
+    dataset:{ file:track.file, dance:track.key },
+    "aria-label":dance.name+" track: "+track.title
+  },
+    el("span", { class:"lib-item__grip", "aria-hidden":"true", text:"⠿" }),
+    el("span", { class:"lib-item__title", text:track.title }),
+    el("button", {
+      class:"lib-item__add", type:"button",
+      "aria-label":"Add "+track.title+" to "+dance.name,
+      onclick:(e)=>{ e.stopPropagation(); selectTrack(track.key, track.file); }
+    }, "Add")
+  );
+
+  li.addEventListener("dragstart", (e)=>{
+    e.dataTransfer.effectAllowed = "copy";
+    e.dataTransfer.setData("text/plain", JSON.stringify({ key:track.key, file:track.file }));
+    li.style.opacity = "0.5";
+  });
+  li.addEventListener("dragend", ()=>{ li.style.opacity = ""; });
+  return li;
+}
+function cssId(s){ return s.replace(/[^a-z0-9]/gi,"_"); }
+
+function refreshLibrarySelection(){
+  document.querySelectorAll(".lib-item").forEach(li=>{
+    const key = li.dataset.dance, file = li.dataset.file;
+    const on = state.slots[key] && state.slots[key].file === file;
+    li.classList.toggle("is-selected", !!on);
+  });
+}
+
+/* ---------------------------------------------------------------
+   10) DRAG & DROP TARGETS (with category validation)
+   --------------------------------------------------------------- */
+function wireDropTarget(slot, danceKey){
+  slot.addEventListener("dragover", (e)=>{
+    e.preventDefault();
+    const payload = readDrag(e);
+    if(payload && payload.key === danceKey){
+      e.dataTransfer.dropEffect = "copy"; slot.classList.add("drag-over"); slot.classList.remove("drag-reject");
+    } else {
+      e.dataTransfer.dropEffect = "none"; slot.classList.add("drag-reject");
+    }
+  });
+  slot.addEventListener("dragleave", ()=>{ slot.classList.remove("drag-over","drag-reject"); });
+  slot.addEventListener("drop", (e)=>{
+    e.preventDefault();
+    slot.classList.remove("drag-over","drag-reject");
+    const payload = readDrag(e);
+    if(!payload) return;
+    if(payload.key !== danceKey){
+      toast(DANCE_BY_KEY[payload.key].name+" tracks can only go in the "+DANCE_BY_KEY[payload.key].name+" slot.", "error");
+      return;
+    }
+    selectTrack(danceKey, payload.file);
+  });
+}
+// dragover can't read data on all browsers; keep a lightweight mirror
+let _dragPayload = null;
+document.addEventListener("dragstart",(e)=>{
+  const li = e.target.closest && e.target.closest(".lib-item");
+  if(li) _dragPayload = { key:li.dataset.dance, file:li.dataset.file };
+});
+document.addEventListener("dragend",()=>{ _dragPayload=null; });
+function readDrag(e){
+  try{
+    const raw = e.dataTransfer.getData("text/plain");
+    if(raw) return JSON.parse(raw);
+  }catch(_){}
+  return _dragPayload;
+}
+
+/* ---------------------------------------------------------------
+   11) SELECT / REMOVE / SPEED
+   --------------------------------------------------------------- */
+function selectTrack(danceKey, file){
+  const track = findTrack(danceKey, file);
+  if(!track){ toast("That track could not be found.", "error"); return; }
+  const prev = state.slots[danceKey];
+  state.slots[danceKey] = { file, speed: prev ? prev.speed : DEFAULT_SPEED };
+  saveState();
+  renderSlots(); refreshLibrarySelection(); renderSummary();
+  loadDuration(track).then(()=>{ renderSummary(); const d=$("#dur-"+danceKey); if(d) setSlotDuration(d, track, state.slots[danceKey].speed); });
+  toast(DANCE_BY_KEY[danceKey].name+": “"+track.title+"” added.", "success", 2600);
+}
+function removeTrack(danceKey){
+  if(!state.slots[danceKey]) return;
+  state.slots[danceKey] = null;
+  saveState();
+  renderSlots(); refreshLibrarySelection(); renderSummary();
+}
+function setSpeed(danceKey, speed){
+  if(!state.slots[danceKey]) return;
+  state.slots[danceKey].speed = speed;
+  saveState();
+  const track = findTrack(danceKey, state.slots[danceKey].file);
+  const d = $("#dur-"+danceKey); if(d && track) setSlotDuration(d, track, speed);
+  renderSummary();
+}
+
+/* ---------------------------------------------------------------
+   12) SUMMARY
+   --------------------------------------------------------------- */
+function renderSummary(){
+  let count=0, music=0;
+  const list = $("#sList"); list.textContent="";
+  DANCES.forEach(dance=>{
+    const sel = state.slots[dance.key];
+    const li = el("li");
+    li.append(el("span", { class:"d", text:dance.name }));
+    if(sel){
+      const track = findTrack(dance.key, sel.file);
+      count++;
+      const dur = track && track.duration ? adjustedDuration(track.duration, sel.speed) : 0;
+      music += dur;
+      li.append(el("span", { class:"t", text: track ? track.title : sel.file }));
+      li.append(el("span", { class:"s", text: speedPct(sel.speed) + (dur?(" · "+fmtTime(dur)):"") }));
+    } else {
+      li.append(el("span", { class:"t empty", text:"— not selected —" }));
+    }
+    list.append(li);
+  });
+  const breaks = NUM_BREAKS * BREAK_SECONDS;
+  $("#sTracks").innerHTML = ""; $("#sTracks").append(String(count), el("span",{html:"/5", class:""}));
+  $("#sTracks").lastChild.style.cssText = "font-size:1rem;color:var(--plum-soft)";
+  $("#sMusic").textContent = fmtTime(music);
+  $("#sBreaks").textContent = fmtTime(breaks);
+  $("#sTotal").textContent = fmtTime(music + breaks);
+}
+
+/* ---------------------------------------------------------------
+   13) VALIDATION
+   --------------------------------------------------------------- */
+function missingDances(){
+  return DANCES.filter(d=>!state.slots[d.key]).map(d=>d.name);
+}
+
+/* ---------------------------------------------------------------
+   14) PREVIEW (single track)
+   --------------------------------------------------------------- */
+const audio = $("#audio");
+let previewing = null;  // dance key currently previewing
+function previewTrack(danceKey){
+  Player.stop(true); // stop any full-routine playback silently
+  const sel = state.slots[danceKey]; if(!sel) return;
+  const track = findTrack(danceKey, sel.file); if(!track) return;
+
+  if(previewing === danceKey && !audio.paused){ audio.pause(); previewing=null; markPreviewButtons(); return; }
+
+  previewing = danceKey;
+  audio.src = track.url;
+  setPreservesPitch(audio, true);
+  audio.playbackRate = sel.speed;
+  audio.volume = state.volume;
+  audio.currentTime = 0;
+  audio.play().catch(()=>toast("Could not play “"+track.title+"”.", "error"));
+  audio.onended = ()=>{ previewing=null; markPreviewButtons(); };
+  markPreviewButtons();
+}
+function markPreviewButtons(){ /* visual state kept minimal; hook for future styling */ }
+function setPreservesPitch(a, val){
+  // preserve musical pitch while changing tempo (cross-browser)
+  if("preservesPitch" in a) a.preservesPitch = val;
+  if("mozPreservesPitch" in a) a.mozPreservesPitch = val;
+  if("webkitPreservesPitch" in a) a.webkitPreservesPitch = val;
+}
+
+/* ---------------------------------------------------------------
+   15) FULL-ROUTINE PLAYER
+   ---------------------------------------------------------------
+   Timeline = [track, break, track, break, ... track] (jive last).
+   One <audio> element plays tracks; breaks are timed silences.
+   Global elapsed within a track = audio.currentTime / speed,
+   because adjustedDuration = original / speed.
+--------------------------------------------------------------- */
+const Player = {
+  segs: [], idx: 0, playing:false, active:false,
+  breakRemaining:0, lastTick:0, tickTimer:null,
+
+  buildSegments(){
+    const segs = [];
+    DANCES.forEach((dance,i)=>{
+      const sel = state.slots[dance.key];
+      const track = findTrack(dance.key, sel.file);
+      const dur = track && track.duration ? track.duration : 0;
+      segs.push({ type:"track", dance:dance.key, name:dance.name, file:sel.file,
+                  url:track.url, speed:sel.speed, title:track.title,
+                  original:dur, adjusted:adjustedDuration(dur, sel.speed) });
+      if(i < DANCES.length-1) segs.push({ type:"break", name:"Competition Break", duration:BREAK_SECONDS });
+    });
+    return segs;
+  },
+  totalDuration(){ return this.segs.reduce((s,seg)=> s + (seg.type==="track"?seg.adjusted:seg.duration), 0); },
+  elapsedBefore(i){ let t=0; for(let k=0;k<i;k++){ const s=this.segs[k]; t += s.type==="track"?s.adjusted:s.duration; } return t; },
+  globalElapsed(){
+    const seg = this.segs[this.idx]; if(!seg) return 0;
+    let within = 0;
+    if(seg.type==="track") within = seg.speed ? (audio.currentTime/seg.speed) : 0;
+    else within = seg.duration - this.breakRemaining;
+    return this.elapsedBefore(this.idx) + Math.max(0, within);
+  },
+
+  async start(){
+    const missing = missingDances();
+    if(missing.length){
+      toast("Please select a track for: " + missing.join(", ") + ".", "error", 5000);
+      return;
+    }
+    previewing=null; audio.onended=null;
+    // ensure durations known
+    for(const d of DANCES){ const t=findTrack(d.key, state.slots[d.key].file); if(t && t.duration==null) await loadDuration(t); }
+    this.segs = this.buildSegments();
+    if(this.totalDuration()<=0){ toast("Tracks could not be loaded. Please check the audio files.", "error"); return; }
+    this.idx = 0; this.active = true;
+    $("#player").classList.add("is-active");
+    $("#pTotal").textContent = fmtTime(this.totalDuration());
+    this.playing = true;
+    this.enter(0, 0);
+    this.loop();
+    $("#player").scrollIntoView({ behavior:"smooth", block:"nearest" });
+  },
+
+  enter(i, offset){ // start segment i at offset seconds (wall time within segment)
+    this.idx = i;
+    const seg = this.segs[i]; if(!seg) return;
+    this.updateNow();
+    if(seg.type==="track"){
+      $("#pBreak").classList.remove("is-on");
+      if(audio.src !== seg.url) audio.src = seg.url;
+      setPreservesPitch(audio, true);
+      audio.playbackRate = seg.speed;
+      audio.volume = state.volume;
+      const media = Math.min(seg.original, Math.max(0, offset*seg.speed));
+      const applyTime = ()=>{ try{ audio.currentTime = media; }catch(_){} };
+      if(audio.readyState>=1) applyTime(); else audio.addEventListener("loadedmetadata", applyTime, {once:true});
+      audio.onended = ()=> this.advance();
+      audio.onerror = ()=>{ toast("Skipped “"+seg.title+"” — file failed to load.", "error"); this.advance(); };
+      if(this.playing) audio.play().catch(()=>{});
+    } else {
+      audio.pause();
+      $("#pBreak").classList.add("is-on");
+      this.breakRemaining = Math.max(0, seg.duration - offset);
+      $("#pBreakCd").textContent = fmtClock(this.breakRemaining);
+    }
+    this.lastTick = performance.now();
+    this.updateSeek();
+  },
+
+  advance(){
+    if(this.idx < this.segs.length-1){ this.enter(this.idx+1, 0); }
+    else { this.finish(); }
+  },
+  finish(){
+    this.playing=false;
+    audio.pause();
+    this.setSeekTo(this.totalDuration());
+    $("#ppBtn").textContent = "▶";
+    $("#pBreak").classList.remove("is-on");
+    toast("Routine complete — your five-dance routine is ready. ✦", "success");
+  },
+
+  loop(){
+    if(this.tickTimer) return;
+    const tick = ()=>{
+      const now = performance.now();
+      const dt = (now - this.lastTick)/1000; this.lastTick = now;
+      const seg = this.segs[this.idx];
+      if(this.playing && seg && seg.type==="break"){
+        this.breakRemaining -= dt;
+        if(this.breakRemaining <= 0){ this.advance(); }
+        else $("#pBreakCd").textContent = fmtClock(this.breakRemaining);
+      }
+      this.updateSeek();
+      this.tickTimer = requestAnimationFrame(tick);
+    };
+    this.lastTick = performance.now();
+    this.tickTimer = requestAnimationFrame(tick);
+  },
+
+  updateNow(){
+    const seg = this.segs[this.idx]; if(!seg) return;
+    if(seg.type==="track"){
+      $("#pSection").textContent = seg.name;
+      $("#pTrack").textContent = seg.title;
+      $("#pSpeed").textContent = speedPct(seg.speed);
+    } else {
+      $("#pSection").textContent = "Competition Break";
+      $("#pTrack").textContent = "30 seconds of silence";
+      $("#pSpeed").textContent = "—";
+    }
+  },
+  updateSeek(){
+    const total = this.totalDuration() || 1;
+    const el = this.globalElapsed();
+    const pct = Math.min(100, (el/total)*100);
+    const seek = $("#seek");
+    if(document.activeElement !== seek){ seek.value = Math.round(pct*10); }
+    seek.style.setProperty("--val", pct+"%");
+    $("#pElapsed").textContent = fmtTime(el);
+  },
+  setSeekTo(globalTime){
+    const total = this.totalDuration() || 1;
+    const pct = Math.min(100, Math.max(0,(globalTime/total)*100));
+    $("#seek").value = Math.round(pct*10);
+    $("#seek").style.setProperty("--val", pct+"%");
+    $("#pElapsed").textContent = fmtTime(globalTime);
+  },
+
+  seekToGlobal(globalTime){
+    globalTime = Math.max(0, Math.min(this.totalDuration(), globalTime));
+    let acc=0;
+    for(let i=0;i<this.segs.length;i++){
+      const s=this.segs[i]; const len = s.type==="track"?s.adjusted:s.duration;
+      if(globalTime <= acc+len || i===this.segs.length-1){
+        this.enter(i, globalTime-acc);
+        return;
+      }
+      acc += len;
+    }
+  },
+  togglePlay(){
+    if(!this.active) { this.start(); return; }
+    const seg = this.segs[this.idx];
+    if(this.playing){
+      this.playing=false;
+      if(seg && seg.type==="track") audio.pause();
+      $("#ppBtn").textContent = "▶";
+    } else {
+      this.playing=true;
+      this.lastTick = performance.now();
+      if(seg && seg.type==="track") audio.play().catch(()=>{});
+      $("#ppBtn").textContent = "⏸";
+    }
+  },
+  prevDance(){ this.jumpDance(-1); },
+  nextDance(){ this.jumpDance(1); },
+  jumpDance(dir){
+    if(!this.active) return;
+    const trackIdxs = this.segs.map((s,i)=>s.type==="track"?i:-1).filter(i=>i>=0);
+    // current track index (if in break, treat as the break's preceding/following track)
+    let curTrackPos = trackIdxs.indexOf(this.idx);
+    if(curTrackPos === -1){
+      // in a break: previous track is idx-1
+      const prevTrack = this.idx-1;
+      curTrackPos = trackIdxs.indexOf(prevTrack);
+      if(dir<0){ this.enter(prevTrack,0); return; }
+    } else if(dir<0 && audio.currentTime > 3){
+      // pressing previous mid-track restarts current track first
+      this.enter(this.idx,0); return;
+    }
+    let target = curTrackPos + dir;
+    target = Math.max(0, Math.min(trackIdxs.length-1, target));
+    this.enter(trackIdxs[target], 0);
+  },
+  stop(silent){
+    if(this.tickTimer){ cancelAnimationFrame(this.tickTimer); this.tickTimer=null; }
+    this.playing=false; this.active=false; this.idx=0; this.breakRemaining=0;
+    audio.pause(); audio.onended=null; audio.onerror=null;
+    try{ audio.currentTime=0; }catch(_){}
+    $("#pBreak").classList.remove("is-on");
+    $("#ppBtn").textContent = "▶";
+    this.setSeekTo(0);
+    if(!silent) $("#player").classList.remove("is-active");
+  }
+};
+
+/* ---------------------------------------------------------------
+   16) MP3 EXPORT (ffmpeg.wasm, single-thread — GitHub-Pages safe)
+   --------------------------------------------------------------- */
+const FFMPEG = {
+  version:"0.12.10", utilVersion:"0.12.1", coreVersion:"0.12.6",
+  instance:null, loadingScripts:false, exporting:false,
+};
+
+function loadScript(src){
+  return new Promise((res,rej)=>{
+    const s=document.createElement("script"); s.src=src; s.async=true;
+    s.onload=res; s.onerror=()=>rej(new Error("Failed to load "+src));
+    document.head.append(s);
+  });
+}
+async function ensureFfmpeg(onStep){
+  if(FFMPEG.instance) return FFMPEG.instance;
+  onStep("Loading audio engine…", 2);
+  if(!window.FFmpegWASM){
+    await loadScript("https://unpkg.com/@ffmpeg/ffmpeg@"+FFMPEG.version+"/dist/umd/ffmpeg.js");
+  }
+  if(!window.FFmpegUtil){
+    await loadScript("https://unpkg.com/@ffmpeg/util@"+FFMPEG.utilVersion+"/dist/umd/index.js");
+  }
+  const { FFmpeg } = window.FFmpegWASM;
+  const { toBlobURL } = window.FFmpegUtil;
+  const ff = new FFmpeg();
+  onStep("Preparing audio engine…", 6);
+  const base = "https://unpkg.com/@ffmpeg/core@"+FFMPEG.coreVersion+"/dist/umd";
+  await ff.load({
+    coreURL: await toBlobURL(base+"/ffmpeg-core.js", "text/javascript"),
+    wasmURL: await toBlobURL(base+"/ffmpeg-core.wasm", "application/wasm"),
+  });
+  FFMPEG.instance = ff;
+  return ff;
+}
+
+// atempo supports one factor per instance; chain for safety (our range 0.6–1.0 = single)
+function atempoChain(speed){
+  if(Math.abs(speed-1)<1e-6) return null;
+  let r = speed; const parts=[];
+  while(r < 0.5){ parts.push("atempo=0.5"); r/=0.5; }
+  while(r > 2.0){ parts.push("atempo=2.0"); r/=2.0; }
+  parts.push("atempo="+r.toFixed(6));
+  return parts.join(",");
+}
+
+async function exportRoutine(){
+  if(FFMPEG.exporting) return;
+  const missing = missingDances();
+  if(missing.length){ toast("Please select a track for: "+missing.join(", ")+".", "error", 5000); return; }
+
+  FFMPEG.exporting = true;
+  $("#downloadBtn").disabled = true;
+  openExportModal();
+  let objectUrl = null;
+  const created = [];  // temp FS files to clean up
+
+  const setStep = (msg, pct)=>{ $("#expStep").textContent = msg; if(pct!=null) setPct(pct); };
+  try{
+    const ff = await ensureFfmpeg(setStep);
+    const { fetchFile } = window.FFmpegUtil;
+
+    // progress from ffmpeg maps into the "current step" band
+    let band=[0,0];
+    ff.on && ff.on("progress", ({progress})=>{
+      if(!isFinite(progress)) return;
+      const p = band[0] + (band[1]-band[0]) * Math.min(1, Math.max(0, progress));
+      setPct(p);
+    });
+
+    // 1) 30s silence, encoded to a consistent format
+    setStep("Creating 30-second break…", 10); band=[10,14];
+    await ff.exec(["-f","lavfi","-i","anullsrc=channel_layout=stereo:sample_rate=44100",
+                   "-t", String(BREAK_SECONDS), "-c:a","libmp3lame","-b:a","192k","silence.mp3"]);
+    created.push("silence.mp3");
+
+    // 2) process each selected track (speed + normalise)
+    const order = [];   // final concat order of FS filenames
+    const bandStart = 16, bandEnd = 74;
+    const step = (bandEnd-bandStart)/DANCES.length;
+    for(let i=0;i<DANCES.length;i++){
+      const dance = DANCES[i];
+      const sel = state.slots[dance.key];
+      const track = findTrack(dance.key, sel.file);
+      const inName = "in"+i+".mp3", outName = "proc"+i+".mp3";
+      setStep("Processing "+dance.name+"…", bandStart + step*i);
+      band = [bandStart + step*i, bandStart + step*(i+1)];
+
+      const data = await fetchFile(track.url);
+      await ff.writeFile(inName, data); created.push(inName);
+
+      const chain = atempoChain(sel.speed);
+      const args = ["-i", inName];
+      if(chain) args.push("-filter:a", chain);
+      args.push("-ar","44100","-ac","2","-c:a","libmp3lame","-b:a","192k", outName);
+      await ff.exec(args); created.push(outName);
+
+      order.push(outName);
+      if(i < DANCES.length-1) order.push("silence.mp3");
+    }
+
+    // 3) concat everything (filter_complex → robust across minor param diffs)
+    setStep("Combining routine…", 80); band=[80,96];
+    const inputs=[]; const streams=[];
+    order.forEach((f,i)=>{ inputs.push("-i", f); streams.push("["+i+":a]"); });
+    const filter = streams.join("")+"concat=n="+order.length+":v=0:a=1[out]";
+    await ff.exec([...inputs, "-filter_complex", filter, "-map","[out]",
+                   "-c:a","libmp3lame","-b:a","192k","output.mp3"]);
+    created.push("output.mp3");
+
+    // 4) read + download
+    setStep("Preparing download…", 98);
+    const out = await ff.readFile("output.mp3");
+    const blob = new Blob([out.buffer], { type:"audio/mpeg" });
+    objectUrl = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = objectUrl; a.download = "Sarahs-Latin-Ballroom-Routine.mp3";
+    document.body.append(a); a.click(); a.remove();
+
+    setPct(100);
+    exportSuccess();
+  }catch(err){
+    console.error(err);
+    exportError(err && err.message ? err.message : "Something went wrong while building the MP3.");
+  }finally{
+    // cleanup temp FS files + object URL
+    if(FFMPEG.instance){
+      for(const f of created){ try{ await FFMPEG.instance.deleteFile(f); }catch(_){} }
+    }
+    if(objectUrl) setTimeout(()=>URL.revokeObjectURL(objectUrl), 60000);
+    FFMPEG.exporting = false;
+    $("#downloadBtn").disabled = false;
+  }
+}
+
+/* ---- export modal helpers ---- */
+function openExportModal(){
+  $("#exportModal").classList.add("is-open");
+  $("#expSpinner").style.display="block";
+  $("#expActions").style.display="none";
+  $("#expTitle").textContent="Creating your routine…";
+  setPct(0); $("#expStep").textContent="Preparing audio engine…";
+}
+function setPct(p){
+  p = Math.min(100, Math.max(0, Math.round(p)));
+  $("#expBar").style.width = p+"%";
+  $("#expPct").textContent = p+"%";
+}
+function exportSuccess(){
+  $("#expSpinner").style.display="none";
+  $("#expTitle").textContent="Your routine is ready ✦";
+  $("#expStep").textContent="Download started — check your device's downloads.";
+  $("#expActions").style.display="flex";
+}
+function exportError(msg){
+  $("#expSpinner").style.display="none";
+  $("#expTitle").textContent="Export didn't finish";
+  $("#expStep").textContent=msg;
+  $("#expActions").style.display="flex";
+  toast("MP3 export failed: "+msg, "error", 6000);
+}
+
+/* ---------------------------------------------------------------
+   17) RESET
+   --------------------------------------------------------------- */
+function resetRoutine(){
+  const ok = window.confirm("Clear your whole routine? This removes all five selected tracks and speed settings.");
+  if(!ok) return;
+  Player.stop(false);
+  state.slots = { chacha:null, samba:null, rumba:null, paso:null, jive:null };
+  saveState();
+  renderSlots(); refreshLibrarySelection(); renderSummary();
+  toast("Routine cleared. Choose a Cha Cha track to begin.", "info");
+}
+
+/* ---------------------------------------------------------------
+   18) WIRE UP + INIT
+   --------------------------------------------------------------- */
+function init(){
+  loadState();
+  renderLibrary();
+  renderSlots();
+  renderSummary();
+
+  // volume
+  const vol = $("#vol");
+  vol.value = Math.round(state.volume*100);
+  vol.style.setProperty("--val", state.volume*100+"%");
+  vol.addEventListener("input", ()=>{
+    state.volume = vol.value/100;
+    vol.style.setProperty("--val", vol.value+"%");
+    audio.volume = state.volume;
+    saveState();
+  });
+
+  // player controls
+  $("#playBtn").addEventListener("click", ()=>Player.start());
+  $("#ppBtn").addEventListener("click", ()=>Player.togglePlay());
+  $("#stopBtn").addEventListener("click", ()=>Player.stop(false));
+  $("#prevBtn").addEventListener("click", ()=>Player.prevDance());
+  $("#nextBtn").addEventListener("click", ()=>Player.nextDance());
+
+  const seek = $("#seek");
+  const seekApply = ()=>{
+    if(!Player.active) return;
+    const total = Player.totalDuration();
+    Player.seekToGlobal((seek.value/1000)*total);
+  };
+  seek.addEventListener("input", ()=>{ seek.style.setProperty("--val",(seek.value/10)+"%"); });
+  seek.addEventListener("change", seekApply);
+
+  // action buttons
+  $("#downloadBtn").addEventListener("click", exportRoutine);
+  $("#resetBtn").addEventListener("click", resetRoutine);
+  $("#expClose").addEventListener("click", ()=>$("#exportModal").classList.remove("is-open"));
+  $("#exportModal").addEventListener("click",(e)=>{ if(e.target.id==="exportModal" && !FFMPEG.exporting) $("#exportModal").classList.remove("is-open"); });
+
+  // smooth CTA
+  $("#createCta").addEventListener("click",(e)=>{ e.preventDefault(); document.getElementById("builder").scrollIntoView({behavior:"smooth"}); });
+
+  // stop playback if page hidden for long? keep simple: pause on hide
+  document.addEventListener("visibilitychange", ()=>{ /* keep playing; browsers handle background audio */ });
+}
+
+document.addEventListener("DOMContentLoaded", init);
+</script>
+</body>
+</html>
